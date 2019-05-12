@@ -5,7 +5,7 @@ for the mars block device kernel driver (https://github.com/schoebel/mars).
 
 ## prerequirements
 
-the following applications are needed on the building host
+the following applications are needed on the building host:
 
   * wget
   * (gnu-)tar
@@ -24,6 +24,9 @@ the following applications are needed on the building host
   * dd
   * mkfs.ext4
   * grub-install
+  
+  the build system also needs access to the internet to be able to download
+  source code.
   
   ## create a new image
   
