@@ -89,3 +89,25 @@ video[0-9]      root:video 0660 >v4l/
 usbdev[0-9].[0-9]       root:root 0660 */lib/mdev/usbdev
 usbdev[0-9].[0-9]_.*    root:root 0660
 EOF
+
+cat > ${FAKEROOTDIR}/etc/rc.d/mountall << "EOF"
+#!/bin/sh
+case "$1" in
+    start)
+    /bin/mount -a
+    ;;
+    stop)
+    /bin/umount -a
+    ;;
+    *)
+    echo "Usage: $0 {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0
+EOF
+chmod u+x ${FAKEROOTDIR}/etc/rc.d/mountall
+chown 0:0 ${FAKEROOTDIR}/etc/rc.d/mountall
+ln -s /etc/rc.d/mountall ${FAKEROOTDIR}/etc/init.d/S20mountall
+ln -s /etc/rc.d/mountall ${FAKEROOTDIR}/etc/init.d/K80mountall

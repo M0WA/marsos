@@ -40,8 +40,8 @@ cat > ${FAKEROOTDIR}/etc/fstab << "EOF"
 rootfs          /               auto    defaults        1      1
 proc            /proc           proc    defaults        0      0
 sysfs           /sys            sysfs   defaults        0      0
-devpts          /dev/pts        devpts  gid=4,mode=620  0      0
-tmpfs           /dev/shm        tmpfs   defaults        0      0
+#devpts          /dev/pts        devpts  gid=4,mode=620  0      0
+#tmpfs           /dev/shm        tmpfs   defaults        0      0
 EOF
 
 ###############################################################################
@@ -92,6 +92,6 @@ set timeout=5
 set root=(hd0,1)
 
 menuentry "${DISTNAME} ${DISTVERSION}" {
-        linux   /boot/vmlinuz-${DISTKERNELVERSION} root=/dev/sda1 ro quiet
+        linux   /boot/vmlinuz-${DISTKERNELVERSION} root=/dev/sda1 rw quiet
 }
 EOF

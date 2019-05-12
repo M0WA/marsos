@@ -36,6 +36,22 @@ for i in /etc/init.d/S??* ;do
      $i start
 done
 EOF
-
 chown 0:0 ${FAKEROOTDIR}/etc/rc.d/startup
 chmod u+x ${FAKEROOTDIR}/etc/rc.d/startup
+
+cat > ${FAKEROOTDIR}/etc/rc.d/shutdown << "EOF"
+#!/bin/sh
+
+# Stop all init scripts in /etc/init.d
+# executing them in numerical order.
+#
+for i in /etc/init.d/K??* ;do
+
+     # Ignore dangling symlinks (if any).
+     [ ! -f "$i" ] && continue
+
+     $i stop
+done
+EOF
+chown 0:0 ${FAKEROOTDIR}/etc/rc.d/shutdown
+chmod u+x ${FAKEROOTDIR}/etc/rc.d/shutdown
