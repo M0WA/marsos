@@ -2,7 +2,13 @@
 
 set -e
 
-rm -rf ${GCCTOOLTMP}
+if [ "${DISTBUILDVERBOSE}" == "1" ]; then
+  set -x
+fi
+
+if [ "${FORCEREBUILD}" == "1" ]; then
+  rm -rf ${GCCTOOLTMP}
+fi
 mkdir -p ${GCCTOOLTMP}
 
 ( cd ${GCCTOOLTMP} && \

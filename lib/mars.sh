@@ -2,16 +2,22 @@
 
 set -e
 
-MARSTMP=${DISTBUILDDIR}/tmp/mars-${MARSBRANCH}
-KERNELTMP=${DISTBUILDDIR}/tmp/linux-${DISTKERNELVANILLA}
+if [ "${DISTBUILDVERBOSE}" == "1" ]; then
+  set -x
+fi
 
-rm -rf ${DISTBUILDDIR}/tmp/mars*
-git clone ${MARSURL} ${MARSTMP}
-( cd ${MARSTMP} && git checkout ${MARSBRANCH} )
-cp -r ${MARSTMP}/kernel/ ${KERNELTMP}/block/mars
-ln -s ${KERNELTMP}/block/mars ${KERNELTMP}/block/mars/kernel
+if [ "${FORCEREBUILD}" == "1"  ]; then
+  rm -rf ${MARSBRANCH}
+fi
 
-( cd ${KERNELTMP} && cat ${DISTBUILDDIR}/tmp/mars-${MARSBRANCH}/pre-patches/vanilla-${DISTKERNELMAJOR}.${DISTKERNELMINOR}/* | patch -p1 )
+if [ ! -d "${MARSTMP}" ]; then
+  git clone ${MARSURL} ${MARSTMP}
+  ( cd ${MARSTMP} && git checkout ${MARSBRANCH} )
+  cp -r ${MARSTMP}/kernel/ ${KERNELTMP}/block/mars
+  ln -s ${KERNELTMP}/block/mars ${KERNELTMP}/block/mars/kernel
 
-# TODO: make patch path absolute/get rid of patch
-patch ${KERNELTMP}/block/mars/Kconfig patches/0001-enable_mars_by_default.patch
+  ( cd ${KERNELTMP} && cat ${DISTBUILDDIR}/tmp/mars-${MARSBRANCH}/pre-patches/vanilla-${DISTKERNELMAJOR}.${DISTKERNELMINOR}/* | patch -p1 )
+
+  # TODO: make patch path absolute/get rid of patch
+  patch ${KERNELTMP}/block/mars/Kconfig patches/0001-enable_mars_by_default.patch
+fi

@@ -13,6 +13,7 @@ the following applications are needed on the building host:
   * make
   * bash
   * git
+  * bc
   * m4
   * gawk
   * bison
@@ -24,8 +25,10 @@ the following applications are needed on the building host:
   * dd
   * mkfs.ext4
   * grub-install
+  * partprobe
+  * fdisk
   
-  the build system also needs access to the internet to be able to download
+  by default the build system also needs access to the internet to be able to download
   source code.
   
   ## create a new image

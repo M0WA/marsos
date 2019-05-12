@@ -2,11 +2,15 @@
 
 set -e
 
+if [ "${DISTBUILDVERBOSE}" == "1" ]; then
+  set -x
+fi
+
 ###############################################################################
 # /etc/passwd
 
 cat > ${FAKEROOTDIR}/etc/passwd << "EOF"
-root::0:0:root:/root:/bin/bash
+root::0:0:root:/root:/bin/sh
 EOF
 
 ###############################################################################
@@ -65,12 +69,12 @@ EOF
 ###############################################################################
 # set hostname
 
-echo ${FAKEHOSTNAME} > ${FAKEROOTDIR}/etc/HOSTNAME
+echo ${FAKEHOSTNAME} > ${FAKEROOTDIR}/etc/hostname
 
 ###############################################################################
 # set issue
 
-cat > ${FAKEROOTDIR}/etc/issue<< "EOF"
+cat > ${FAKEROOTDIR}/etc/issue<< EOF
 ${DISTNAME} ${DISTVERSION}
 Kernel \r (\m)
 
@@ -80,7 +84,7 @@ EOF
 # install grub
 
 mkdir -p ${FAKEROOTDIR}/boot/grub
-cat > ${FAKEROOTDIR}/boot/grub/grub.cfg<< "EOF"
+cat > ${FAKEROOTDIR}/boot/grub/grub.cfg<< EOF
 
 set default=0
 set timeout=5

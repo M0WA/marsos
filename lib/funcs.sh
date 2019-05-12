@@ -4,9 +4,16 @@ function download_and_verify() {
   URL=$1
   LOCALFILE=$2
 
-  if [ ! -f ${LOCALFILE} ]; then
-    wget -4 -O ${LOCALFILE}     ${URL}
-    wget -4 -O ${LOCALFILE}.sig ${URL}.sig || echo
+  if [ "${FORCEREBUILD}" == "1" ]; then
+    rm -rf "${LOCALFILE}" "${LOCALFILE}.sig"
+  fi
+
+  if [ ! -f "${LOCALFILE}" ]; then
+    wget -4 -nv -O "${LOCALFILE}" ${URL}
+  fi
+
+  if [ ! -f "${LOCALFILE}.sig" ]; then
+    wget -4 -nv -O "${LOCALFILE}.sig" ${URL}.sig || echo
   fi
 
   #TODO: check gpg signature

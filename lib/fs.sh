@@ -2,7 +2,13 @@
 
 set -e
 
-rm -rf ${FAKEROOTDIR}
+if [ "${DISTBUILDVERBOSE}" == "1" ]; then
+  set -x
+fi
+
+if [ "${FORCEREBUILD}" == "1"  ]; then
+  rm -rf ${FAKEROOTDIR}
+fi
 
 ###############################################################################
 # filesystem hierarchy

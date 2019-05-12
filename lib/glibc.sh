@@ -2,18 +2,26 @@
 
 set -e
 
-rm -rf ${GLIBCTMP} ${GLIBCTMP}-build
+if [ "${DISTBUILDVERBOSE}" == "1" ]; then
+  set -x
+fi
+
+if [ "${FORCEREBUILD}" == "1" ]; then
+  rm -rf ${GLIBCTMP} ${GLIBCTMP}-build
+fi
+mkdir -p ${GLIBCTMP}-build
 
 download_and_verify ${GLIBCURL}/glibc-${GLIBCVERSION}.tar.xz ${GLIBCTMP}.tar.xz
 
-( cd ${DISTBUILDDIR}/tmp && tar xJf ${GLIBCTMP}.tar.xz )
-#( cd ${GLIBCTMP} && \
-#echo "libc_cv_forced_unwind=yes" > config.cache && \
-#echo "libc_cv_c_cleanup=yes"     >> config.cache && \
-#echo "libc_cv_ssp=no"            >> config.cache && \
-#echo "libc_cv_ssp_strong=no"     >> config.cache )
+if [ ! -d "${GLIBCTMP}" ]; then
+  ( cd ${DISTBUILDDIR}/tmp && tar xJf ${GLIBCTMP}.tar.xz )
+  #( cd ${GLIBCTMP} && \
+  #echo "libc_cv_forced_unwind=yes" > config.cache && \
+  #echo "libc_cv_c_cleanup=yes"     >> config.cache && \
+  #echo "libc_cv_ssp=no"            >> config.cache && \
+  #echo "libc_cv_ssp_strong=no"     >> config.cache )
+fi
 
-mkdir -p ${GLIBCTMP}-build
 ( cd ${GLIBCTMP}-build && \
 BUILD_CC="gcc" CC="${DISTTARGET}-gcc" \
 AR="${DISTTARGET}-ar" \
