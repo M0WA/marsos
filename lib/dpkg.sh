@@ -17,15 +17,19 @@ if [ ! -d "${DPKGTMP}" ]; then
 fi
 
 mkdir -p ${DPKGTMP}-build
-( cd ${DPKGTMP}-build && ${DPKGTMP}/./configure \
+( cd ${DPKGTMP}-build && \
+CC="${DISTTARGET}-gcc" \
+AR="${DISTTARGET}-ar" \
+RANLIB="${DISTTARGET}-ranlib" CFLAGS="-O2" \
+LDFLAGS="-L${FAKEROOTDIR}"
+${DPKGTMP}/./configure \
 --prefix=${FAKEROOTDIR}/usr \
---target=${DISTTARGET} \
 --host=${DISTTARGET} \
---with-sysroot=${FAKEROOTDIR} \
 --enable-mmap \
+--enable-dselect \
 --with-libz=${FAKEROOTDIR} \
+--with-sysroot=${FAKEROOTDIR} \
 --disable-nls \
---disable-dselect \
 --disable-shared )
 
 ( cd ${DPKGTMP}-build && make ${GCCPARALLEL} && make install )

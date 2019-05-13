@@ -48,15 +48,13 @@ EOF
 # /etc/profile
 
 cat > ${FAKEROOTDIR}/etc/profile << "EOF"
-export PATH=/bin:/usr/bin
+export PATH=/bin:/usr/bin:/usr/local/bin/
 
 if [ `id -u` -eq 0 ] ; then
-        PATH=/bin:/sbin:/usr/bin:/usr/sbin
+        PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin/
         unset HISTFILE
 fi
 
-
-# Set up some environment variables.
 export USER=`id -un`
 export LOGNAME=$USER
 export HOSTNAME=`/bin/hostname`
@@ -64,6 +62,7 @@ export HISTSIZE=1000
 export HISTFILESIZE=1000
 export PAGER='/bin/more '
 export EDITOR='/bin/vi'
+export TERM=xterm
 EOF
 
 ###############################################################################

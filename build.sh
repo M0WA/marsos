@@ -66,6 +66,9 @@ ${SCRIPTPATH}/lib/busybox_depmod.sh 2>&1 | tee -a ${DISTBUILDLOG}
 echo "libz"
 ${SCRIPTPATH}/lib/libz.sh 2>&1 | tee -a ${DISTBUILDLOG}
 
+echo "ncurses"
+${SCRIPTPATH}/lib/ncurses.sh 2>&1 | tee -a ${DISTBUILDLOG}
+
 echo "dpkg"
 ${SCRIPTPATH}/lib/dpkg.sh 2>&1 | tee -a ${DISTBUILDLOG}
 

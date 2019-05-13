@@ -25,7 +25,7 @@ CPP="${DISTTARGET}-gcc -E" \
 AR="${DISTTARGET}-ar" \
 RANLIB="${DISTTARGET}-ranlib" 
 CFLAGS="-O2" \
-LDFLAGS="-L${GMPTMP}-build/lib -L${MPFRTMP}-build/lib -L${MPCTMP}-build/lib" \
+LDFLAGS="" \
 ${LIBZTMP}/./configure --prefix=${FAKEROOTDIR}/usr
 )
 

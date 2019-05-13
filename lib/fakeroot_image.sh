@@ -13,7 +13,9 @@ rm -rf ${IMAGEBUILDDIR}
 cp -r ${FAKEROOTDIR} ${IMAGEBUILDDIR}
 
 # delete useless files
-rm -rfv ${IMAGEBUILDDIR}/cross-tools
+if [ "${DISTBUILDVERBOSE}" != "1" ]; then
+  rm -rfv ${IMAGEBUILDDIR}/cross-tools
+fi
 rm -rfv ${IMAGEBUILDDIR}/usr/src/*
 
 # delete static libs
@@ -32,6 +34,8 @@ chgrp 13 ${IMAGEBUILDDIR}/var/run/utmp ${IMAGEBUILDDIR}/var/log/lastlog
 mknod -m 0666 ${IMAGEBUILDDIR}/dev/null c 1 3
 mknod -m 0600 ${IMAGEBUILDDIR}/dev/console c 5 1
 chmod 4755 ${IMAGEBUILDDIR}/bin/busybox
+
+rm -f "${IMAGEBUILDTMP}.tar.xz"
 
 # create filesystem tar
 if [ ! -f "${IMAGEBUILDTMP}.tar.xz" ]; then
