@@ -63,5 +63,11 @@ ${SCRIPTPATH}/lib/kernel_build.sh 2>&1 | tee -a ${DISTBUILDLOG}
 echo "depmod"
 ${SCRIPTPATH}/lib/busybox_depmod.sh 2>&1 | tee -a ${DISTBUILDLOG}
 
+echo "libz"
+${SCRIPTPATH}/lib/libz.sh 2>&1 | tee -a ${DISTBUILDLOG}
+
+echo "dpkg"
+${SCRIPTPATH}/lib/dpkg.sh 2>&1 | tee -a ${DISTBUILDLOG}
+
 echo "create image from fakeroot"
 ${SCRIPTPATH}/lib/fakeroot_image.sh 2>&1 | tee -a ${DISTBUILDLOG}

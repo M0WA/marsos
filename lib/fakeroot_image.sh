@@ -1,19 +1,14 @@
 #!/bin/bash
 
-# Hint:
-# FORCEREBUILD is ignored while building the image,
-# we always rebuild the image since we cannot easily
-# detect if something changes
-
 set -e
 
 if [ "${DISTBUILDVERBOSE}" == "1" ]; then
   set -x
 fi
 
+IMAGEBUILDDIR=${IMAGEBUILDTMP}-build
 IMAGECREATEPARTITION=1
 
-# create copy of fakeroot dir
 rm -rf ${IMAGEBUILDDIR}
 cp -r ${FAKEROOTDIR} ${IMAGEBUILDDIR}
 
@@ -39,11 +34,8 @@ mknod -m 0600 ${IMAGEBUILDDIR}/dev/console c 5 1
 chmod 4755 ${IMAGEBUILDDIR}/bin/busybox
 
 # create filesystem tar
-if [ "${FORCEREBUILD}" == "1"  ]; then
-  rm ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.tar.xz
-fi
-if [ ! -f "${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.tar.xz" ]; then
-  (cd ${IMAGEBUILDDIR}/ && tar cfJ "${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.tar.xz" .)
+if [ ! -f "${IMAGEBUILDTMP}.tar.xz" ]; then
+  (cd ${IMAGEBUILDDIR}/ && tar cJf "${IMAGEBUILDTMP}.tar.xz" *)
 fi
 
 # create + zero fill image
@@ -60,9 +52,11 @@ if [ "${IMAGECREATEPARTITION}" == "1" ]; then
   echo w # Write changes
   ) | fdisk ${LODEV} || echo
   #partprobe
+  kpartx -uv ${LODEV}
 
   # recreate loop dev to force kernel to rescan partition table
   losetup -d ${LODEV}
+  sleep 1
   LODEV=`losetup --show -P -f ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img`
 
   # create partition
@@ -75,10 +69,11 @@ if [ "${IMAGECREATEPARTITION}" == "1" ]; then
   echo w # Write changes
   ) | fdisk ${LODEV}
   #partprobe
-
+  kpartx -uv ${LODEV}
 
   # recreate loop dev to force kernel to rescan partition table
   losetup -d ${LODEV}
+  sleep 1
   LODEV=`losetup --show -P -f ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img`
   LOPART=${LODEV}p1
 fi
@@ -89,7 +84,7 @@ mkdir -p ${DISTBUILDDIR}/mnt
 mount ${LOPART} ${DISTBUILDDIR}/mnt
 
 # copy ${DISTNAME} filesystem to image
-(cd ${DISTBUILDDIR}/mnt && tar xJf ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.tar.xz )
+(cd ${DISTBUILDDIR}/mnt && tar xJf ${IMAGEBUILDTMP}.tar.xz )
 
 # install grub bootloader
 grub-install --modules=part_msdos -v --boot-directory=${DISTBUILDDIR}/mnt/boot ${LODEV}
