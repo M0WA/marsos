@@ -72,5 +72,8 @@ ${SCRIPTPATH}/lib/ncurses.sh 2>&1 | tee -a ${DISTBUILDLOG}
 echo "dpkg"
 ${SCRIPTPATH}/lib/dpkg.sh 2>&1 | tee -a ${DISTBUILDLOG}
 
+echo "preparing mars userspace tools"
+${SCRIPTPATH}/lib/mars.sh 2>&1 | tee -a ${DISTBUILDLOG}
+
 echo "create image from fakeroot"
 ${SCRIPTPATH}/lib/fakeroot_image.sh 2>&1 | tee -a ${DISTBUILDLOG}

@@ -15,8 +15,8 @@ mkdir -p ${LIBZTMP}-build
 download_and_verify ${LIBZURL}/zlib-${LIBZVERSION}.tar.gz ${LIBZTMP}.tar.gz
 
 if [ ! -d "${LIBZTMP}" ]; then
-  mv ${DISTBUILDDIR}/tmp/zlib-${LIBZVERSION} ${DISTBUILDDIR}/tmp/libz-${LIBZVERSION}
   ( cd ${DISTBUILDDIR}/tmp && tar xzf ${LIBZTMP}.tar.gz )
+  mv ${DISTBUILDDIR}/tmp/zlib-${LIBZVERSION} ${LIBZTMP}
 fi
 
 ( cd ${LIBZTMP}-build && \
