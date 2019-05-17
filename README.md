@@ -1,6 +1,6 @@
 # marsOS
 
-marsOS is a tiny busybox-based linux distribution that is mainly used for development and debugging tasks
+marsOS is a tiny debian-based linux distribution that is mainly used for development and debugging tasks
 for the mars block device kernel driver (https://github.com/schoebel/mars).
 
 ## prerequirements
@@ -23,9 +23,9 @@ the following applications are needed on the building host:
   * mknod
   * losetup
   * dd
-  * mkfs.ext4
+  * mkfs.ext3
   * grub-install
-  * partprobe
+  * kpartx
   * fdisk
   
   by default the build system also needs access to the internet to be able to download
@@ -39,3 +39,7 @@ the following applications are needed on the building host:
   when you are done with configuration finally build the image like so:
   
       ./build.sh
+
+  ## run the image
+
+       ./run.sh
