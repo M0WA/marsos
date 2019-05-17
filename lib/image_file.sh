@@ -43,6 +43,3 @@ LOPART=${LOMAPDEV}p1
 
 # create filesystem
 mkfs.ext3 ${LOPART}
-umount ${DISTFAKEROOT} || echo
-mkdir -p ${DISTFAKEROOT}
-mount ${LOPART} ${DISTFAKEROOT}

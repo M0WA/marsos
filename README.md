@@ -28,18 +28,46 @@ the following applications are needed on the building host:
   * kpartx
   * fdisk
   
-  by default the build system also needs access to the internet to be able to download
-  source code.
-  
-  ## create a new image
-  
-  before you build a new marsOS image consult dist.conf in the root of the repo.
-  it contains all neccessary configuration for building a marsOS image.
-  
-  when you are done with configuration finally build the image like so:
-  
-      ./build.sh
+by default the build system needs access to the internet to download source code.
 
-  ## run the image
+## configuration
+  
+before you build a new marsOS image you might want to have a look at conf/dist.conf located in this repo.
+it contains all neccessary configuration for building a marsOS image.
 
-       ./run.sh
+## create a new image
+    
+depending on the configuration, you might be asked to enter a root password during the image building process.
+
+use the following command to build the image:
+  
+    ./build.sh
+
+if there is an error during the build process you might want to cleanup remaining
+loopback devices (losetup + dmsetup).
+
+## run the image
+
+this will run the image with qemu.
+
+    ./run.sh
+
+## test-suite prerequirements
+
+a few more applications have to be installed to run the test-suite:
+
+  * qemu-static-${DISTARCH}
+  * bridge-utils
+
+the test script will setup a so-called host-only network for the virtuals machines
+involved in the tests. this affects the hosts you are executing the tests on. make
+sure that the ip address range configured in conf/test.conf is unused on your machine.
+
+## execute test-suite
+
+the test-suite uses configuration from conf/dist.conf as well as conf/test.conf.
+running the following command will start up 2 qemu based vms based on the current image.
+
+    ./test.sh
+
+one will be configured as master, the other as slave.

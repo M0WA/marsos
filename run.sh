@@ -2,6 +2,9 @@
 
 SCRIPTPATH="$(cd "$(dirname "$0")" && pwd)"
 
-source ${SCRIPTPATH}/dist.conf
+source ${SCRIPTPATH}/conf/dist.conf
+source ${SCRIPTPATH}/lib/funcs.sh
 
-qemu-system-${DISTARCH} -hda ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img -m 256 -curses
+IMAGENAME=${1:-${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img}
+
+run_qemu qemu-system-${DISTARCH} ${IMAGENAME} 256 ${TESTBRIDGE} curses

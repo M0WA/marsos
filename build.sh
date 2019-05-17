@@ -2,13 +2,13 @@
 
 set -e
 
+SCRIPTPATH="$(cd "$(dirname "$0")" && pwd)"
+source ${SCRIPTPATH}/conf/dist.conf
+source ${SCRIPTPATH}/lib/funcs.sh
+
 if [ "${DISTBUILDVERBOSE}" == "1" ]; then
   set -x
 fi
-
-SCRIPTPATH="$(cd "$(dirname "$0")" && pwd)"
-
-source ${SCRIPTPATH}/dist.conf
 
 if [ "${FORCEREBUILD}" == "1"  ]; then
   echo "cleanup old builds"
@@ -20,29 +20,35 @@ mkdir -p ${DISTBUILDDIR}/{,mnt,tmp}
 # truncate log
 echo -n > ${DISTBUILDLOG}
 
-echo "create + mount image"
-${SCRIPTPATH}/lib/image_file.sh 2>&1 | tee -a ${DISTBUILDLOG}
+echo "create image file"
+exec_script ${SCRIPTPATH} lib/image_file.sh ${DISTBUILDLOG}
+
+echo "mount image file"
+mount_image ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img ${IMAGESIZEBYTES} p1 ${DISTFAKEROOT}
 
 echo "debootstrap"
-${SCRIPTPATH}/lib/debootstrap.sh 2>&1 | tee -a ${DISTBUILDLOG}
+exec_script ${SCRIPTPATH} lib/debootstrap.sh ${DISTBUILDLOG}
 
 echo "preparing vanilla kernel sources"
-${SCRIPTPATH}/lib/kernel_sources.sh 2>&1 | tee -a ${DISTBUILDLOG}
+exec_script ${SCRIPTPATH} lib/kernel_sources.sh ${DISTBUILDLOG}
 
-echo "preparing mars fs"
-${SCRIPTPATH}/lib/mars.sh 2>&1 | tee -a ${DISTBUILDLOG}
+echo "preparing mars kernel module"
+exec_script ${SCRIPTPATH} lib/mars.sh ${DISTBUILDLOG}
 
 echo "build + install kernel"
-${SCRIPTPATH}/lib/kernel_build.sh 2>&1 | tee -a ${DISTBUILDLOG}
+exec_script ${SCRIPTPATH} lib/kernel_build.sh ${DISTBUILDLOG}
 
 echo "config files"
-${SCRIPTPATH}/lib/config_files.sh 2>&1 | tee -a ${DISTBUILDLOG}
+exec_script ${SCRIPTPATH} lib/config_files.sh ${DISTBUILDLOG}
+
+echo "configure sshd"
+exec_script ${SCRIPTPATH} lib/sshd.sh ${DISTBUILDLOG}
 
 echo "copy mars userspace tools"
-${SCRIPTPATH}/lib/mars_user.sh 2>&1 | tee -a ${DISTBUILDLOG}
+exec_script ${SCRIPTPATH} lib/mars_user.sh ${DISTBUILDLOG}
 
 echo "install grub"
-${SCRIPTPATH}/lib/grub.sh 2>&1 | tee -a ${DISTBUILDLOG}
+exec_script ${SCRIPTPATH} lib/grub.sh ${DISTBUILDLOG}
 
 echo "unmount image"
-#${SCRIPTPATH}/lib/image_umount.sh 2>&1 | tee -a ${DISTBUILDLOG}
+umount_image ${DISTFAKEROOT}
