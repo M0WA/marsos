@@ -24,10 +24,10 @@ echo "copying images"
 exec_script ${SCRIPTPATH} test/test_images.sh ${TESTLOG}
 
 echo "config master image"
-exec_script ${SCRIPTPATH} test/config_master.sh ${TESTLOG}
+exec_script ${SCRIPTPATH} test/master_config.sh ${TESTLOG}
 
 echo "config slave image"
-exec_script ${SCRIPTPATH} test/config_slave.sh ${TESTLOG}
+exec_script ${SCRIPTPATH} test/slave_config.sh ${TESTLOG}
 
 echo "create bridge"
 exec_script ${SCRIPTPATH} test/bridge_ifup.sh ${TESTLOG}
@@ -41,11 +41,19 @@ run_qemu qemu-system-${DISTARCH} ${TESTSLAVEIMG}  256 none "-hdb ${TESTSLAVETRXL
 echo "waiting for mars master"
 wait_ssh ${TESTMASTERIP} root ${DISTSSHKEY}
 
+echo "do mars runtime configuration on master"
+exec_script ${SCRIPTPATH} test/master_marsadm.sh ${TESTLOG}
+
 echo "waiting for mars slave"
 wait_ssh ${TESTSLAVEIP} root ${DISTSSHKEY}
 
-echo "run tests (press enter to continue)"
-#TODO: actually run tests
+echo "do mars runtime configuration on slave"
+exec_script ${SCRIPTPATH} test/slave_marsadm.sh ${TESTLOG}
+
+echo "run test-suite"
+exec_script ${SCRIPTPATH} test/run_testsuite.sh ${TESTLOG}
+
+echo "test finished, press enter to shutdown and cleanup"
 read
 
 echo "shutdown vms"
