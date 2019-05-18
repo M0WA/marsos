@@ -24,7 +24,7 @@ echo "create image file"
 exec_script ${SCRIPTPATH} lib/image_file.sh ${DISTBUILDLOG}
 
 echo "mount image file"
-mount_image ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img ${IMAGESIZEBYTES} p1 ${DISTFAKEROOT}
+mount_image ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img ${DISTIMAGEBYTES} p1 ${DISTFAKEROOT}
 
 echo "debootstrap"
 exec_script ${SCRIPTPATH} lib/debootstrap.sh ${DISTBUILDLOG}

@@ -8,30 +8,11 @@ source ${SCRIPTPATH}/conf/test.conf
 source ${SCRIPTPATH}/lib/funcs.sh
 source ${SCRIPTPATH}/test/funcs.sh
 
-function generic_test_config() {
-  BASEDIR=$1
-  HOSTNAME=$2
-  IP=$3
-
-  echo ${HOSTNAME} > ${BASEDIR}/etc/hostname
-  cat > ${BASEDIR}/etc/hosts << EOF
-127.0.0.1 localhost
-127.0.1.1 ${HOSTNAME}
-
-# The following lines are desirable for IPv6 capable hosts
-::1     ip6-localhost ip6-loopback
-fe00::0 ip6-localnet
-ff00::0 ip6-mcastprefix
-ff02::1 ip6-allnodes
-ff02::2 ip6-allrouters
-ff02::3 ip6-allhosts
-EOF
-}
-export -f generic_test_config
-
 if [ "${TESTVERBOSE}" == "1" ]; then
   set -x
 fi
+
+mkdir -p ${TESTBUILDDIR}
 
 # truncate log
 echo -n > ${TESTLOG}
@@ -52,13 +33,13 @@ echo "create bridge"
 exec_script ${SCRIPTPATH} test/bridge_ifup.sh ${TESTLOG}
 
 echo "starting mars master"
-run_qemu qemu-system-${DISTARCH} ${TESTMASTERIMG} 256 none "-daemonize -net nic -net bridge,br=${TESTBRIDGE}"
+run_qemu qemu-system-${DISTARCH} ${TESTMASTERIMG} 256 none "-hdb ${TESTMASTERTRXLOGIMG} -daemonize -net nic -net bridge,br=${TESTBRIDGE}"
+
+echo "starting mars slave"
+run_qemu qemu-system-${DISTARCH} ${TESTSLAVEIMG}  256 none "-hdb ${TESTSLAVETRXLOGIMG} -daemonize -net nic -net bridge,br=${TESTBRIDGE}"
 
 echo "waiting for mars master"
 wait_ssh ${TESTMASTERIP} root ${DISTSSHKEY}
-
-echo "starting mars slave"
-run_qemu qemu-system-${DISTARCH} ${TESTSLAVEIMG}  256 none "-daemonize -net nic -net bridge,br=${TESTBRIDGE}"
 
 echo "waiting for mars slave"
 wait_ssh ${TESTSLAVEIP} root ${DISTSSHKEY}

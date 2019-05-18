@@ -66,7 +66,7 @@ sure that the ip address range configured in conf/test.conf is unused on your ma
 ## execute test-suite
 
 the test-suite uses configuration from conf/dist.conf as well as conf/test.conf.
-running the following command will start up 2 qemu based vms based on the current image.
+running the following command will start up 2 qemu vms based on the current image.
 
     ./test.sh
 

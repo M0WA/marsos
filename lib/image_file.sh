@@ -12,17 +12,17 @@ if [ "${FORCEREBUILD}" == "1"  ]; then
 fi
 
 DDOPTS=
-if [ "${IMAGESPARSE}" == "1" ]; then
+if [ "${DISTIMAGESPARSE}" == "1" ]; then
   DDOPTS=conv=sparse
 fi
 
 # create + zero fill image
 if [ ! -f ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img ]; then
-  dd if=/dev/zero of=${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img ${DDOPTS} count=${IMAGESIZE} bs=1M
+  dd if=/dev/zero of=${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img ${DDOPTS} count=${DISTIMAGESIZE} bs=1M
 fi
 
 # create loopback device
-LODEV=`losetup --sizelimit ${IMAGESIZEBYTES} --direct-io=on -L --show -f ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img`
+LODEV=`losetup --sizelimit ${DISTIMAGEBYTES} --direct-io=on -L --show -f ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img`
 LODEVNAME=`echo "${LODEV}" | awk -F'/' '{print $3}'`
 LOMAPDEV=/dev/mapper/${LODEVNAME}
 
