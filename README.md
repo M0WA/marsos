@@ -30,6 +30,11 @@ the following applications are needed on the building host:
   
 by default the build system needs access to the internet to download source code.
 
+## recommendations
+
+it is strongly recommended to run these scripts within a virtual machine, setup only for the single purpose of
+image building/debugging. misconfiguration and bugs can otherwise destroy the machine you are working on.
+
 ## configuration
   
 before you build a new marsOS image you might want to have a look at conf/dist.conf located in this repo.
