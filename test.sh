@@ -33,10 +33,10 @@ echo "create bridge"
 exec_script ${SCRIPTPATH} test/bridge_ifup.sh ${TESTLOG}
 
 echo "starting mars master"
-run_qemu qemu-system-${DISTARCH} ${TESTMASTERIMG} ${TESTVMRAM} none "-hdb ${TESTMASTERTRXLOGIMG} -hdc ${TESTMASTERPVIMG} -smp ${TESTVMCORES} -daemonize -net nic -net bridge,br=${TESTBRIDGE}" | tee -a ${TESTLOG}
+run_qemu qemu-system-${DISTARCH} ${TESTMASTERIMG} ${TESTVMRAM} none "-hdb ${TESTMASTERPVIMG} -smp ${TESTVMCORES} -daemonize -net nic -net bridge,br=${TESTBRIDGE}" | tee -a ${TESTLOG}
 
 echo "starting mars slave"
-run_qemu qemu-system-${DISTARCH} ${TESTSLAVEIMG}  ${TESTVMRAM} none "-hdb ${TESTSLAVETRXLOGIMG} -hdc ${TESTSLAVEPVIMG} -smp ${TESTVMCORES} -daemonize -net nic -net bridge,br=${TESTBRIDGE}" | tee -a ${TESTLOG}
+run_qemu qemu-system-${DISTARCH} ${TESTSLAVEIMG}  ${TESTVMRAM} none "-hdb ${TESTSLAVEPVIMG} -smp ${TESTVMCORES} -daemonize -net nic -net bridge,br=${TESTBRIDGE}" | tee -a ${TESTLOG}
 
 echo "waiting for mars master"
 wait_ssh ${TESTMASTERIP} root ${DISTSSHKEY} | tee -a ${TESTLOG}

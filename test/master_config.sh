@@ -17,14 +17,6 @@ generic_testsetup ${TESTMASTERMNT} ${TESTMASTERHOSTNAME} enp0s3 ${TESTMASTERIP}/
 echo "unmount master image"
 umount_image ${TESTMASTERMNT}
 
-if [ ! -f ${TESTMASTERTRXLOGIMG} ]; then
-  echo "create mars transaction log image for master"
-  create_image ${TESTMASTERTRXLOGIMG} ${TESTTRXIMAGESIZE}
-fi
-
-echo "format mars transaction log image for master"
-format_image ${TESTMASTERTRXLOGIMG} ${TESTTRXIMAGESIZE} ext4
-
 if [ ! -f ${TESTMASTERPVIMG} ]; then
   echo "create mars pv image for master"
   create_image ${TESTMASTERPVIMG} ${TESTPVIMAGESIZE}

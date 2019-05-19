@@ -51,7 +51,6 @@ function generic_testsetup() {
 rootfs           /             auto    defaults                 1     1
 proc             /proc         proc    defaults                 0     0
 sysfs            /sys          sysfs   defaults                 0     0
-/dev/sdb1        /mars         ext4    defaults                 0     0
 EOF
 
   echo "enable reachability"

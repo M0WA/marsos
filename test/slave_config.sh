@@ -17,14 +17,6 @@ generic_testsetup ${TESTSLAVEMNT} ${TESTSLAVEHOSTNAME} enp0s3 ${TESTSLAVEIP}/${T
 echo "unmount slave image"
 umount_image ${TESTSLAVEMNT}
 
-if [ ! -f ${TESTSLAVETRXLOGIMG} ]; then
-  echo "create mars transaction log image for slave"
-  create_image ${TESTSLAVETRXLOGIMG} ${TESTTRXIMAGESIZE}
-fi
-
-echo "format mars transaction log image for slave"
-format_image ${TESTSLAVETRXLOGIMG} ${TESTTRXIMAGESIZE} ext4
-
 if [ ! -f ${TESTSLAVEPVIMG} ]; then
   echo "create mars pv image for slave"
   create_image ${TESTSLAVEPVIMG} ${TESTPVIMAGESIZE}
