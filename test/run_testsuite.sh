@@ -13,9 +13,22 @@ if [ ! -d ${TESTSUITETMP} ]; then
   ( cd ${TESTSUITETMP} && git checkout ${TESTSUITEBRANCH} )
 fi
 
+VMNUMBER=0
+VMIP=${TESTVMSTARTIP}
+VMIPLIST=""
+
+while [ ${VMNUMBER} -lt ${TESTVMCOUNT} ]; do
+  
+  IMAGEIP=${TESTBRIDGEIPNET}.${VMIP}
+  VMIPLIST="${IMAGEIP} ${VMIPLIST}"
+
+  VMNUMBER=$[$VMNUMBER+1]
+  VMIP=$[$VMIP+1]
+done
+
 echo "configure mars test-suite"
 cat > ${TESTSUITETMP}/mars/mars.preconf << EOF
-const_host_list="${TESTMASTERIP} ${TESTSLAVEIP}"
+const_host_list="${VMIPLIST}"
 EOF
 
 echo "run mars test-suite"

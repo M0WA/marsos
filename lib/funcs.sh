@@ -3,8 +3,8 @@
 set -e
 
 function download_and_verify() {
-  URL=$1
-  LOCALFILE=$2
+  local URL=$1
+  local LOCALFILE=$2
 
   if [ "${FORCEREBUILD}" == "1" ]; then
     rm -rf "${LOCALFILE}" "${LOCALFILE}.sig"
@@ -25,12 +25,12 @@ function download_and_verify() {
 export -f download_and_verify
 
 function exec_script() {
-  BASEPATH=$1
-  SCRIPTNAME=$2
-  LOGFILE=$3
+  local BASEPATH=$1
+  local SCRIPTNAME=$2
+  local LOGFILE=$3
 
   ${BASEPATH}/${SCRIPTNAME} 2>&1 | tee -a ${LOGFILE}
-  SCRIPTRC=$?
+  local SCRIPTRC=$?
   if [ "${SCRIPTRC}" != "0" ]; then
     echo "${BASEPATH}/${SCRIPTNAME} failed with rc: $?" | tee -a ${LOGFILE}
     exit ${SCRIPTRC}
@@ -40,15 +40,15 @@ function exec_script() {
 export -f exec_script
 
 function mount_image() {
-  IMAGEPATH=$1
-  IMAGEBYTES=$2
-  PARTITION=$3
-  MOUNTPATH=$4
+  local IMAGEPATH=$1
+  local IMAGEBYTES=$2
+  local PARTITION=$3
+  local MOUNTPATH=$4
 
-  LODEV=`losetup --sizelimit ${IMAGEBYTES} --direct-io=on -L --show -f ${IMAGEPATH}`
-  LODEVNAME=`echo "${LODEV}" | awk -F'/' '{print $3}'`
-  LOMAPDEV=/dev/mapper/${LODEVNAME}
-  LOPART=${LOMAPDEV}${PARTITION}
+  local LODEV=`losetup --sizelimit ${IMAGEBYTES} --direct-io=on -L --show -f ${IMAGEPATH}`
+  local LODEVNAME=`echo "${LODEV}" | awk -F'/' '{print $3}'`
+  local LOMAPDEV=/dev/mapper/${LODEVNAME}
+  local LOPART=${LOMAPDEV}${PARTITION}
 
   sleep 1
   kpartx -uv ${LODEV}
@@ -61,11 +61,11 @@ function mount_image() {
 export -f mount_image
 
 function umount_image() {
-  MOUNTPATH=$1
+  local MOUNTPATH=$1
 
-  LOOPPARTDEV=`mount | grep ${MOUNTPATH} | awk '{print $1}'`
-  LOOPPARTNAME=`echo "${LOOPPARTDEV}" | awk -F'/' '{print $4}'`
-  LOOPDEV=`echo "${LOOPPARTNAME}" | sed -e 's/p1$//g'`
+  local LOOPPARTDEV=`mount | grep ${MOUNTPATH} | awk '{print $1}'`
+  local LOOPPARTNAME=`echo "${LOOPPARTDEV}" | awk -F'/' '{print $4}'`
+  local LOOPDEV=`echo "${LOOPPARTNAME}" | sed -e 's/p1$//g'`
 
   if [ "${LOOPDEV}" != "" ]; then
     umount ${MOUNTPATH} || echo -n
@@ -77,10 +77,10 @@ function umount_image() {
 export -f umount_image
 
 function create_image() {
-  IMAGENAME=$1
-  IMAGESIZE=$2
-  IMAGEDDOPTS=$3
-  IMAGEBYTES=$( expr 1048576 '*' "${IMAGESIZE}" )
+  local IMAGENAME=$1
+  local IMAGESIZE=$2
+  local IMAGEDDOPTS=$3
+  local IMAGEBYTES=$( expr 1048576 '*' "${IMAGESIZE}" )
 
   dd if=/dev/zero of=${IMAGENAME} count=${IMAGESIZE} bs=1M ${IMAGEDDOPTS}
 }
@@ -88,10 +88,10 @@ function create_image() {
 export -f create_image
 
 function format_image() {
-  IMAGENAME=$1
-  IMAGESIZE=$2
-  IMAGEFS=$3
-  IMAGEBYTES=$( expr 1048576 '*' "${IMAGESIZE}" )
+  local IMAGENAME=$1
+  local IMAGESIZE=$2
+  local IMAGEFS=$3
+  local IMAGEBYTES=$( expr 1048576 '*' "${IMAGESIZE}" )
 
   # create loopback device
   LODEV=`losetup --sizelimit ${IMAGEBYTES} --direct-io=on -L --show -f ${IMAGENAME}`
@@ -126,11 +126,11 @@ function format_image() {
 export -f format_image
 
 function run_qemu() {
-  QEMUBIN=$1
-  IMAGENAME=$2
-  MEMORYSIZE=$3
-  DISPLAYTYPE=$4
-  QEMUOPTS=$5
+  local QEMUBIN=$1
+  local IMAGENAME=$2
+  local MEMORYSIZE=$3
+  local DISPLAYTYPE=$4
+  local QEMUOPTS=$5
 
   ${QEMUBIN} -hda ${IMAGENAME} -m ${MEMORYSIZE} -display ${DISPLAYTYPE} ${QEMUOPTS}
 }
@@ -138,8 +138,8 @@ function run_qemu() {
 export -f run_qemu
 
 function set_image_hostname() {
-  BASEDIR=$1
-  HOSTNAME=$2
+  local BASEDIR=$1
+  local HOSTNAME=$2
 
   echo ${HOSTNAME} > ${BASEDIR}/etc/hostname
   cat > ${BASEDIR}/etc/hosts << EOF

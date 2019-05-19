@@ -3,10 +3,11 @@
 set -e
 
 function set_image_ip() {
-  BASEDIR=$1
-  INTERFACE=$2
-  IPNET=$3
-  MAC=$4
+  local BASEDIR=$1
+  local INTERFACE=$2
+  local IPNET=$3
+  local MAC=$4
+
   cat > ${BASEDIR}/etc/network/interfaces << EOF
 # This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
@@ -28,11 +29,11 @@ EOF
 export -f set_image_ip
 
 function generic_testsetup() {
-  BASEDIR=$1
-  IMAGEHOSTNAME=$2
-  INTERFACE=$3
-  IPNET=$4
-  MAC=$5
+  local BASEDIR=$1
+  local IMAGEHOSTNAME=$2
+  local INTERFACE=$3
+  local IPNET=$4
+  local MAC=$5
 
   echo "setting hostname: ${IMAGEHOSTNAME}"
   set_image_hostname ${BASEDIR} ${IMAGEHOSTNAME}
@@ -58,22 +59,40 @@ EOF
   cp ${DISTSSHKEY}.pub ${BASEDIR}/root/.ssh/id_rsa.pub
   chmod 0600 ${BASEDIR}/root/.ssh/id_rsa*
   chown 0:0  ${BASEDIR}/root/.ssh/id_rsa*
-
-  cat > ${BASEDIR}/etc/hosts << EOF
-${TESTMASTERIP} ${TESTMASTERHOSTNAME}
-${TESTSLAVEIP} ${TESTSLAVEHOSTNAME}
-EOF
 }
 
 export -f generic_testsetup
 
-function wait_ssh() {
-  SSHHOST=$1
-  SSHUSER=$2
-  SSHKEY=$3
+function generate_etc_hosts() {
+  local HOSTPREFIX=$1
+  local IPNET=$2
+  local IPSTART=$3
+  local VMCOUNT=$4
 
-  RC=1
-  TRYS=0
+  local VMNUMBER=0
+  local VMIP=${IPSTART}
+
+  while [ ${VMNUMBER} -lt ${VMCOUNT} ]; do
+  
+    local IMAGEIP=${IPNET}.${VMIP}
+    local IMAGEHOSTNAME=${HOSTPREFIX}${VMNUMBER}
+
+    echo -e "\n${IMAGEIP} ${IMAGEHOSTNAME}" >> ${BASEDIR}/etc/hosts
+
+    VMNUMBER=$[$VMNUMBER+1]
+    VMIP=$[$VMIP+1]
+  done
+}
+
+export -f generate_etc_hosts
+
+function wait_ssh() {
+  local SSHHOST=$1
+  local SSHUSER=$2
+  local SSHKEY=$3
+
+  local RC=1
+  local TRYS=0
 
   set +e
 
@@ -91,10 +110,10 @@ function wait_ssh() {
 export -f wait_ssh
 
 function setup_test_lvm() {
-  SSHHOST=$1
-  SSHUSER=$2
-  SSHKEY=$3
-  PVDEV=$4
+  local SSHHOST=$1
+  local SSHUSER=$2
+  local SSHKEY=$3
+  local PVDEV=$4
 
   ssh -i ${SSHKEY} ${SSHUSER}@${SSHHOST} /bin/bash << EOF
 vgscan -v 
