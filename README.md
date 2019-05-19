@@ -48,9 +48,9 @@ image building/debugging. misconfiguration and bugs can otherwise destroy the ma
 
 for all ssh based actions, by default, your ${HOME}/.ssh/id_rsa key will be used and appended to authorized_keys
 files in created images. if you run the test-suite (test.sh) it will additionally be copied into the test images.
-please be aware of that.
+please be aware of that. if the key does not exist it will be created automatically.
 
-if the key does not exist it will be created.
+the actual key used can be configured in conf/dist.conf ($DISTSSHKEY)
 
 ## configuration
   
@@ -103,11 +103,12 @@ to contain all test images and artifacts.
 ## execute test-suite
 
 the test-suite uses configuration from conf/dist.conf as well as conf/test.conf.
-running the following command will start up 2 qemu vms based on the current image.
+running the following command will start up ${TESTVMCOUNT} qemu vms based on the current image
+as well as configure the mars test-suite on the local machine and run it.
 
     ./test.sh
 
-one will be configured as master, the other as slave.
+the test script will prompt you before tests are started as well as
+display information of how to connect to the vms manually via ssh.
 
-the test script will prompt you to start the tests as well as
-information of how to connect to the vms manually via ssh.
+the test-suite will run *very* long. be warned.
