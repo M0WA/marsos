@@ -33,22 +33,35 @@ echo "create bridge"
 exec_script ${SCRIPTPATH} test/bridge_ifup.sh ${TESTLOG}
 
 echo "starting mars master"
-run_qemu qemu-system-${DISTARCH} ${TESTMASTERIMG} 256 none "-hdb ${TESTMASTERTRXLOGIMG} -daemonize -net nic -net bridge,br=${TESTBRIDGE}"
+run_qemu qemu-system-${DISTARCH} ${TESTMASTERIMG} 1024 none "-hdb ${TESTMASTERTRXLOGIMG} -hdc ${TESTMASTERPVIMG} -daemonize -net nic -net bridge,br=${TESTBRIDGE}" | tee -a ${TESTLOG}
 
 echo "starting mars slave"
-run_qemu qemu-system-${DISTARCH} ${TESTSLAVEIMG}  256 none "-hdb ${TESTSLAVETRXLOGIMG} -daemonize -net nic -net bridge,br=${TESTBRIDGE}"
+run_qemu qemu-system-${DISTARCH} ${TESTSLAVEIMG}  1024 none "-hdb ${TESTSLAVETRXLOGIMG} -hdc ${TESTSLAVEPVIMG} -daemonize -net nic -net bridge,br=${TESTBRIDGE}" | tee -a ${TESTLOG}
 
 echo "waiting for mars master"
-wait_ssh ${TESTMASTERIP} root ${DISTSSHKEY}
+wait_ssh ${TESTMASTERIP} root ${DISTSSHKEY} | tee -a ${TESTLOG}
+
+echo "config ssh host key for master"
+ssh-keygen -R ${TESTMASTERIP} | tee -a ${TESTLOG}
+ssh-keyscan -H ${TESTMASTERIP} >> ~/.ssh/known_hosts | tee -a ${TESTLOG}
 
 echo "do mars runtime configuration on master"
 exec_script ${SCRIPTPATH} test/master_marsadm.sh ${TESTLOG}
 
 echo "waiting for mars slave"
-wait_ssh ${TESTSLAVEIP} root ${DISTSSHKEY}
+wait_ssh ${TESTSLAVEIP} root ${DISTSSHKEY} | tee -a ${TESTLOG}
+
+echo "config ssh host key for slave"
+ssh-keygen -R ${TESTSLAVEIP} | tee -a ${TESTLOG}
+ssh-keyscan -H ${TESTSLAVEIP} >> ~/.ssh/known_hosts | tee -a ${TESTLOG}
 
 echo "do mars runtime configuration on slave"
 exec_script ${SCRIPTPATH} test/slave_marsadm.sh ${TESTLOG}
+
+echo "to connect to master: ssh -i ${DISTSSHKEY} root@${TESTMASTERIP}"
+echo "to connect to slave : ssh -i ${DISTSSHKEY} root@${TESTSLAVEIP}"
+echo "press enter to run the mars test suite"
+read
 
 echo "run test-suite"
 exec_script ${SCRIPTPATH} test/run_testsuite.sh ${TESTLOG}
@@ -58,7 +71,7 @@ read
 
 echo "shutdown vms"
 #TODO: we could do better here
-killall qemu-system-${DISTARCH}
+killall qemu-system-${DISTARCH} | tee -a ${TESTLOG}
 sleep 3
 
 echo "destroy bridge"

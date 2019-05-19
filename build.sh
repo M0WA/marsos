@@ -21,10 +21,13 @@ mkdir -p ${DISTBUILDDIR}/{,mnt,tmp}
 echo -n > ${DISTBUILDLOG}
 
 echo "create image file"
-exec_script ${SCRIPTPATH} lib/image_file.sh ${DISTBUILDLOG}
+create_image ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img ${DISTIMAGESIZE} ${DISTIMAGEDDOPTS} | tee -a ${DISTBUILDLOG}
+
+echo "format image file"
+format_image ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img ${DISTIMAGESIZE} ext3 | tee -a ${DISTBUILDLOG}
 
 echo "mount image file"
-mount_image ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img ${DISTIMAGEBYTES} p1 ${DISTFAKEROOT}
+mount_image ${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img ${DISTIMAGEBYTES} p1 ${DISTFAKEROOT} | tee -a ${DISTBUILDLOG}
 
 echo "debootstrap"
 exec_script ${SCRIPTPATH} lib/debootstrap.sh ${DISTBUILDLOG}
@@ -51,4 +54,4 @@ echo "install grub"
 exec_script ${SCRIPTPATH} lib/grub.sh ${DISTBUILDLOG}
 
 echo "unmount image"
-umount_image ${DISTFAKEROOT}
+umount_image ${DISTFAKEROOT} | tee -a ${DISTBUILDLOG}

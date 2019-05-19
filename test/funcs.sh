@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 function set_image_ip() {
   BASEDIR=$1
   INTERFACE=$2
@@ -24,43 +26,6 @@ EOF
 }
 
 export -f set_image_ip
-
-function create_mars_trxlog_image() {
-  IMAGENAME=$1
-  IMAGESIZE=$2
-  IMAGEBYTES=$( expr 1048576 '*' "${IMAGESIZE}" )
-
-  dd if=/dev/zero of=${IMAGENAME} count=${IMAGESIZE} bs=1M
-
-  # create loopback device
-  LODEV=`losetup --sizelimit ${IMAGEBYTES} --direct-io=on -L --show -f ${IMAGENAME}`
-  LODEVNAME=`echo "${LODEV}" | awk -F'/' '{print $3}'`
-  LOMAPDEV=/dev/mapper/${LODEVNAME}
-
-  # create partition
-  (
-  echo o # Create a new empty DOS partition table
-  echo n # Add a new partition
-  echo p # Primary partition
-  echo 1 # Partition number
-  echo   # First sector (Accept default: 1)
-  echo   # Last sector
-  echo w # Write changes
-  ) | fdisk ${LODEV} || echo -n
-  kpartx -uv ${LODEV}
-  sleep 3
-
-  # create filesystem
-  LOPART=${LOMAPDEV}p1
-  mkfs.ext4 ${LOPART}
-  kpartx -uv ${LODEV}
-  sleep 3
-
-  dmsetup remove ${LODEVNAME}p1 || echo -n
-  losetup -d ${LODEV} || echo -n
-}
-
-export -f create_mars_trxlog_image
 
 function generic_testsetup() {
   BASEDIR=$1
@@ -94,6 +59,11 @@ EOF
   cp ${DISTSSHKEY}.pub ${BASEDIR}/root/.ssh/id_rsa.pub
   chmod 0600 ${BASEDIR}/root/.ssh/id_rsa*
   chown 0:0  ${BASEDIR}/root/.ssh/id_rsa*
+
+  cat > ${BASEDIR}/etc/hosts << EOF
+${TESTMASTERIP} ${TESTMASTERHOSTNAME}
+${TESTSLAVEIP} ${TESTSLAVEHOSTNAME}
+EOF
 }
 
 export -f generic_testsetup
@@ -120,3 +90,18 @@ function wait_ssh() {
 }
 
 export -f wait_ssh
+
+function setup_test_lvm() {
+  SSHHOST=$1
+  SSHUSER=$2
+  SSHKEY=$3
+  PVDEV=$4
+
+  ssh -i ${SSHKEY} ${SSHUSER}@${SSHHOST} /bin/bash << EOF
+vgscan -v 
+pvcreate -ff -y ${PVDEV}
+vgcreate vg00 ${PVDEV}
+EOF
+}
+
+export -f setup_test_lvm

@@ -51,6 +51,9 @@ use the following command to build the image:
 if there is an error during the build process you might want to cleanup remaining
 loopback devices (losetup + dmsetup).
 
+in case everything is successful a raw image is available in ${DISTBUILDDIR}. 
+see run.sh as an example of how to run the image.
+
 ## run the image
 
 this will run the image with qemu.

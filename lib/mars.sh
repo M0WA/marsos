@@ -17,7 +17,4 @@ if [ ! -d "${MARSTMP}" ]; then
   ln -s ${KERNELTMP}/block/mars ${KERNELTMP}/block/mars/kernel
 
   ( cd ${KERNELTMP} && cat ${DISTBUILDDIR}/tmp/mars-${MARSBRANCH}/pre-patches/vanilla-${DISTKERNELMAJOR}.${DISTKERNELMINOR}/* | patch -p1 )
-
-  # TODO: make patch path absolute/get rid of patch
-  patch ${KERNELTMP}/block/mars/Kconfig patches/0001-enable_mars_by_default.patch
 fi

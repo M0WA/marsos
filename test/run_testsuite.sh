@@ -19,4 +19,4 @@ const_host_list="${TESTMASTERIP} ${TESTSLAVEIP}"
 EOF
 
 echo "run mars test-suite"
-( cd ${TESTSUITETMP}/mars && ${TESTSUITETMP}/scripts/run-tests.sh )
+( cd ${TESTSUITETMP}/mars && timeout=${TESTSUITETIMEOUT} ${TESTSUITETMP}/scripts/run-tests.sh )
