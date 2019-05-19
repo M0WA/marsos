@@ -50,13 +50,13 @@ for all ssh based actions, by default, your ${HOME}/.ssh/id_rsa key will be used
 files in created images. if you run the test-suite (test.sh) it will additionally be copied into the test images.
 please be aware of that.
 
-if the key does not exists it will be created.
+if the key does not exist it will be created.
 
 ## configuration
   
 before you build a new marsOS image you might want to have a look at conf/dist.conf located in this repo.
 it contains all neccessary configuration for building a marsOS image. the default configuration should do
-for you.
+for you except maybe DISTBUILDDIR (default: /mnt/marsos).
 
 ## create a new image
     
