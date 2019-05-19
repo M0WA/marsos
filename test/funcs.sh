@@ -64,10 +64,11 @@ EOF
 export -f generic_testsetup
 
 function generate_etc_hosts() {
-  local HOSTPREFIX=$1
-  local IPNET=$2
-  local IPSTART=$3
-  local VMCOUNT=$4
+  local BASEDIR=$1
+  local HOSTPREFIX=$2
+  local IPNET=$3
+  local IPSTART=$4
+  local VMCOUNT=$5
 
   local VMNUMBER=0
   local VMIP=${IPSTART}

@@ -31,7 +31,7 @@ while [ ${VMNUMBER} -lt ${TESTVMCOUNT} ]; do
   generic_testsetup ${TESTBUILDMNT} ${IMAGEHOSTNAME} enp0s3 ${IMAGEIP}/${TESTBRIDGENET} ${VMNUMBER}
 
   echo "generating /etc/hosts"
-  generate_etc_hosts ${TESTHOSTPREFIX} ${TESTBRIDGEIPNET} ${TESTVMSTARTIP} ${TESTVMCOUNT}
+  generate_etc_hosts ${TESTBUILDMNT} ${TESTHOSTPREFIX} ${TESTBRIDGEIPNET} ${TESTVMSTARTIP} ${TESTVMCOUNT}
 
   echo "unmount vm image"
   umount_image ${TESTBUILDMNT}
