@@ -44,7 +44,7 @@ refer to conf/dist.conf where all of these values can be configured.
 it is strongly recommended to run these scripts within a virtual machine, setup only for the single purpose of
 image building/debugging. misconfiguration and bugs can otherwise destroy the machine you are working on.
 
-## security implications
+## security considerations
 
 for all ssh based actions, by default, your ${HOME}/.ssh/id_rsa key will be used and appended to authorized_keys
 files in created images. if you run the test-suite (test.sh) it will additionally be copied into the test images.
