@@ -112,3 +112,22 @@ the test script will prompt you before tests are started as well as
 display information of how to connect to the vms manually via ssh.
 
 the test-suite will run *very* long. be warned.
+
+## cross-building/cross-compilation
+
+building the marsOS image for a different architecture is not *fully* supported yet.
+lib/debootstrap.sh is still missing "second-stage".
+
+## changing kernel version
+
+if you want to replace the kernel by a different vanilla version, have a look for the following variables in conf/dist.conf and change these accordingly:
+
+ * DISTKERNELMAJOR
+ * DISTKERNELMINOR
+ * DISTKERNELRELEASE
+
+## changing debian release version
+
+if you want to change the debian release version, have a look for the following variables in conf/dist.conf and change these accordingly:
+
+  * DEBIANRELEASE
