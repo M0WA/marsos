@@ -27,6 +27,7 @@ the following applications are needed on the building host:
   * grub-install
   * kpartx
   * fdisk
+  * debootstrap
   
 by default the build system needs access to the internet to download source code.
 
@@ -91,14 +92,15 @@ sure that the ip address range configured in conf/test.conf is unused on your ma
 
 testing is cpu/mem and io intensive. as a minimum requirement for test-vms i observed:
 
-   * 1 GB RAM
+   * 4 GB RAM
    * 3 cores
 
 the machine running the tests as well as the vms should also have at least
 
-   * 100GB of storage
+   * 80GB of storage
 
-to contain all test images and artifacts.
+to contain all test images and artifacts. these are just minimas for "running the test".
+they will take forever though if you give only that minimum.
 
 ## execute test-suite
 
