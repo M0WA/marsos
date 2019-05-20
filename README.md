@@ -29,7 +29,13 @@ the following applications are needed on the building host:
   * fdisk
   * debootstrap
   
-by default the build system needs access to the internet to download source code.
+by default the build system needs access to the internet to download source code. on a minimal debian stretch
+the following packages have to be installed:
+
+  * build-essential
+  * debootstrap
+  * kpartx
+  * bc
 
 i used a debian stretch minimal installation in a virtual machine to build the image with 
 the following _minimum_ hardware settings:
