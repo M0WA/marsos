@@ -28,7 +28,7 @@ while [ ${VMNUMBER} -lt ${TESTVMCOUNT} ]; do
   mount_image ${IMAGEFILE} ${DISTIMAGEBYTES} p1 ${TESTBUILDMNT}
 
   echo "configuring vm image"
-  generic_testsetup ${TESTBUILDMNT} ${IMAGEHOSTNAME} enp0s3 ${IMAGEIP}/${TESTBRIDGENET} ${VMNUMBER}
+  generic_testsetup ${TESTBUILDMNT} ${IMAGEHOSTNAME} enp0s3 ${IMAGEIP}/${TESTBRIDGENET} $( expr 1 '+' "${VMNUMBER}" )
 
   echo "generating /etc/hosts"
   generate_etc_hosts ${TESTBUILDMNT} ${TESTHOSTPREFIX} ${TESTBRIDGEIPNET} ${TESTVMSTARTIP} ${TESTVMCOUNT}
