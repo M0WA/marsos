@@ -131,3 +131,9 @@ if you want to replace the kernel by a different vanilla version, have a look fo
 if you want to change the debian release version, have a look for the following variables in conf/dist.conf and change these accordingly:
 
   * DEBIANRELEASE
+
+## bugs/caveats
+
+in the current state, not every error stops the processing of the called bash script (i.e. build.sh/test.sh).
+currently you have to look through he output and see if you spot errors, this is a well known bug and will be 
+addressed in later versions.
