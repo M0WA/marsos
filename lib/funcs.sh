@@ -127,12 +127,18 @@ export -f format_image
 
 function run_qemu() {
   local QEMUBIN=$1
-  local IMAGENAME=$2
+  local IMAGENAMES=$2
   local MEMORYSIZE=$3
   local DISPLAYTYPE=$4
   local QEMUOPTS=$5
 
-  ${QEMUBIN} -hda ${IMAGENAME} -m ${MEMORYSIZE} -display ${DISPLAYTYPE} ${QEMUOPTS}
+  local IMAGEDRIVES=
+  for IMG in ${IMAGENAMES}
+  do
+    IMAGEDRIVES="${IMAGEDRIVES} -drive cache=directsync,format=raw,aio=threads,media=disk,file=${IMG}"
+  done
+
+  ${QEMUBIN} ${IMAGEDRIVES} -m ${MEMORYSIZE} -display ${DISPLAYTYPE} ${QEMUOPTS}
 }
 
 export -f run_qemu
@@ -156,3 +162,76 @@ ff02::3 ip6-allhosts
 EOF
 }
 export -f set_image_hostname
+
+function generate_build_config() {
+  local TMPLDIR=$1
+  local OUTDIR=$2
+  local KERNELMAJOR=$3
+  local KERNELMINOR=$4
+  local KERNELRELEASE=$5
+  local DISTRELEASE=$6
+
+  cp ${TMPLDIR}/dist.conf.tmpl ${OUTDIR}/dist.${DISTRELEASE}.conf
+  sed -i -e "s/__DISTRELEASE__/${DISTRELEASE}/g" ${OUTDIR}/dist.${DISTRELEASE}.conf
+  sed -i -e "s/__DISTKERNELMAJOR__/${KERNELMAJOR}/g" ${OUTDIR}/dist.${DISTRELEASE}.conf
+  sed -i -e "s/__DISTKERNELMINOR__/${KERNELMINOR}/g" ${OUTDIR}/dist.${DISTRELEASE}.conf
+  sed -i -e "s/__DISTKERNELRELEASE__/${KERNELRELEASE}/g" ${OUTDIR}/dist.${DISTRELEASE}.conf
+}
+
+export -f generate_build_config
+
+function generate_test_config() {
+  local TMPLDIR=$1
+  local OUTDIR=$2
+  local DISTRELEASE=$3
+  local NUMBER=$4
+
+  cp ${TMPLDIR}/test.conf.tmpl ${OUTDIR}/test.${DISTRELEASE}.conf
+  sed -i -e "s/__NETID__/${NUMBER}/g" ${OUTDIR}/test.${DISTRELEASE}.conf
+}
+
+export -f generate_test_config
+
+function get_release_by_kernel() {
+  local KERNELMAJOR=$1
+  local KERNELMINOR=$2
+
+  if [[ "${KERNELMAJOR}" == "4"  ]]; then
+    if [[ "${KERNELMINOR}" == "1"  ]]; then
+      echo -n "52"
+    elif [[ "${KERNELMINOR}" == "4"  ]]; then
+      echo -n "180"
+    elif [[ "${KERNELMINOR}" == "6"  ]]; then
+      echo -n "7"
+    elif [[ "${KERNELMINOR}" == "7"  ]]; then
+      echo -n "10"
+    elif [[ "${KERNELMINOR}" == "9"  ]]; then
+      echo -n "179"
+    fi
+  fi
+}
+
+export -f get_release_by_kernel
+
+function generate_configs() {
+  local MARSDIR=$1
+  local TMPLDIR=$2
+  local OUTDIR=$3
+  local KERNELVERSIONS=$(find ${MARSDIR}/pre-patches/ -name vanilla-\* -print |  sed -e 's/.*vanilla\-//g' | sort -n)
+  local COUNT=0
+
+  for VERSION in ${KERNELVERSIONS}
+  do
+    local KERNELMAJOR=`echo -n ${VERSION} | sed -e 's/\..*//g'`
+    local KERNELMINOR=`echo -n ${VERSION} | sed -e 's/.*\.//g'`
+    local KERNELRELEASE=$(get_release_by_kernel ${KERNELMAJOR} ${KERNELMINOR})
+    if [[ "${KERNELRELEASE}" != "" ]]; then
+      local DISTRELEASE=${KERNELMAJOR}.${KERNELMINOR}.${KERNELRELEASE}
+      generate_build_config ${TMPLDIR} ${OUTDIR} ${KERNELMAJOR} ${KERNELMINOR} ${KERNELRELEASE} ${DISTRELEASE}
+      generate_test_config  ${TMPLDIR} ${OUTDIR} ${DISTRELEASE} ${COUNT}
+      COUNT=$(expr $COUNT + 1)
+    fi
+  done
+}
+
+export -f generate_configs

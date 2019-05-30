@@ -7,4 +7,4 @@ source ${SCRIPTPATH}/lib/funcs.sh
 
 IMAGENAME=${1:-${DISTBUILDDIR}/${DISTNAME}-${DISTVERSION}.img}
 
-run_qemu qemu-system-${DISTARCH} ${IMAGENAME} 256 ${TESTBRIDGE} curses
+run_qemu qemu-system-${DISTARCH} ${IMAGENAME} 256 curses

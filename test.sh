@@ -3,9 +3,19 @@
 set -e
 
 SCRIPTPATH="$(cd "$(dirname "$0")" && pwd)"
+CONFIGFILE=${SCRIPTPATH}/conf/dist.conf
+TESTFILE=${SCRIPTPATH}/conf/test.conf
 
-source ${SCRIPTPATH}/conf/dist.conf
-source ${SCRIPTPATH}/conf/test.conf
+while getopts c:t: opt
+do
+  case $opt in
+    c) CONFIGFILE=$OPTARG;;
+    t) TESTFILE=$OPTARG;;
+  esac
+done
+
+source ${CONFIGFILE}
+source ${TESTFILE}
 source ${SCRIPTPATH}/lib/funcs.sh
 source ${SCRIPTPATH}/test/funcs.sh
 
@@ -35,14 +45,14 @@ exec_script ${SCRIPTPATH} test/vm_runtime_config.sh ${TESTLOG}
 
 echo "the following vms have been started:"
 exec_script ${SCRIPTPATH} test/print_vm_info.sh ${TESTLOG}
-echo "press enter to continue"
-read
+#echo "press enter to continue"
+#read
 
 echo "run test-suite"
 exec_script ${SCRIPTPATH} test/run_testsuite.sh ${TESTLOG}
 
-echo "test finished, press enter to continue"
-read
+#echo "test finished, press enter to continue"
+#read
 
 echo "shutdown vms"
 #TODO: we could do better here
@@ -50,4 +60,4 @@ killall qemu-system-${DISTARCH} | tee -a ${TESTLOG}
 sleep 3
 
 echo "destroy bridge"
-exec_script ${SCRIPTPATH} test/bridge_ifdown.sh ${TESTLOG}
+#exec_script ${SCRIPTPATH} test/bridge_ifdown.sh ${TESTLOG}

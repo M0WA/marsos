@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # build config
-export TESTBUILDDIR=/mnt/marsos/${DISTNAME}-test
+export TESTBUILDDIR=/mnt/marsos/${DISTNAME}-test-${DISTRELEASE}
 export TESTBUILDMNT=${TESTBUILDDIR}/mnt
 export TESTIMAGEPREFIX=${TESTBUILDDIR}/${DISTNAME}-${DISTVERSION}
 export TESTLOG=${TESTBUILDDIR}/test.log
@@ -18,10 +18,10 @@ export TESTHOSTPREFIX=marsos-
 export TESTVMSTARTIP=2
 
 # network config
-export TESTBRIDGE=br0
-export TESTBRIDGEIPNET=172.20.0
+export TESTBRIDGE=br__NETID__
+export TESTBRIDGEIPNET=172.25.__NETID__
 export TESTBRIDGEIP=${TESTBRIDGEIPNET}.1
-export TESTBRIDGENET=16
+export TESTBRIDGENET=24
 
 # test-suite config
 export TESTSUITEURL=https://github.com/schoebel/test-suite

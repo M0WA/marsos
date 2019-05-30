@@ -17,7 +17,7 @@ while [ ${VMNUMBER} -lt ${TESTVMCOUNT} ]; do
   IMAGEIP=${TESTBRIDGEIPNET}.${VMIP}
 
   echo "starting vm"
-  run_qemu qemu-system-${DISTARCH} ${IMAGEFILE} ${TESTVMRAM} none "-hdb ${PHYIMAGEFILE} -smp ${TESTVMCORES} -daemonize -net nic -net bridge,br=${TESTBRIDGE}"
+  run_qemu qemu-system-${DISTARCH} "${IMAGEFILE} ${PHYIMAGEFILE}" ${TESTVMRAM} "none" "-smp ${TESTVMCORES} -daemonize -net nic -net bridge,br=${TESTBRIDGE}"
 
   echo "waiting for vm to come up"
   wait_ssh ${IMAGEIP} root ${DISTSSHKEY}

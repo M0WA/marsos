@@ -3,7 +3,17 @@
 set -e
 
 SCRIPTPATH="$(cd "$(dirname "$0")" && pwd)"
-source ${SCRIPTPATH}/conf/dist.conf
+CONFIGFILE=${SCRIPTPATH}/conf/dist.conf
+TESTFILE=${SCRIPTPATH}/conf/test.conf
+
+while getopts c: opt
+do
+  case $opt in
+    c) CONFIGFILE=$OPTARG;;
+  esac
+done
+
+source ${CONFIGFILE}
 source ${SCRIPTPATH}/lib/funcs.sh
 
 if [ "${DISTBUILDVERBOSE}" == "1" ]; then
